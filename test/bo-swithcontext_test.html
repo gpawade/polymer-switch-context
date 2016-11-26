@@ -1,0 +1,32 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title>bo-swithcontext test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../bo-swithcontext.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <bo-swithcontext></bo-swithcontext>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('bo-swithcontext', function() {
+
+        test('instantiating the element works', function() {
+          var element = fixture('basic');
+          assert.equal(element.is, 'bo-swithcontext');
+        });
+
+      });
+    </script>
+  </body>
+</html>

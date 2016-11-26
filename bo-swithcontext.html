@@ -1,0 +1,230 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+
+<link rel="import" href="bo-context-box.html">
+
+<!--
+`bo-swithcontext`
+
+
+@demo demo/index.html 
+-->
+
+<dom-module id="bo-swithcontext">
+  <template>
+
+    <style>
+      :host {
+        display: block;
+      }
+      
+      #contextSwitchDialog {
+        margin: 0;
+      }
+      
+      paper-dialog {
+        background: #0b0e14;
+        color: white;
+        max-width: 75% !important;
+        padding: 10px;
+      }
+      
+      h4 {
+        margin: 5px;
+      }
+      
+      ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0px;
+        text-align: center;
+      }
+      
+      .clear {
+        clear: both;
+      }
+    </style>
+
+    <paper-icon-button id="contextSwitchButton" icon="view-module"></paper-icon-button>
+
+    <paper-dialog id="contextSwitchDialog" no-overlap horizontal-align="left" vertical-align="top">
+
+      <h4> Switch Organisation Context</h4>
+      <div style="float:left;">
+        <template is="dom-if" if="{{levelOneEnable}}">
+          <bo-context-box id="boxClient" items={{itemsOne}} on-selected="levelOneSelected" isloading={{levelOneLoading}}></bo-context-box>
+        </template>
+
+        <template is="dom-if" if="{{levelTwoEnable}}">
+          <bo-context-box items={{itemsTwo}} on-selected="levelTwoSelected" isloading={{levelTwoLoading}}></bo-context-box>
+        </template>
+
+        <template is="dom-if" if="{{levelThreeEnable}}">
+          <bo-context-box items={{itemsThree}} on-selected="levelThreeSelected" isloading={{levelThreeLoading}}></bo-context-box>
+        </template>
+
+        <template is="dom-if" if="{{levelFourEnable}}">
+          <bo-context-box items={{itemsFour}} on-selected="levelFourSelected" isloading={{levelFourLoading}}></bo-context-box>
+        </template>
+      </div>
+
+      <div style="float:right">
+
+        <ul>
+
+          <template is="dom-if" if="{{levelOneItem}}">
+            <li> {{levelOneItem.name}}</li>
+          </template>
+
+          <template is="dom-if" if="{{levelTwoItem}}" restamp="true">
+
+            <li>
+              <iron-icon icon="arrow-downward"></iron-icon><br> {{levelTwoItem.name}}
+
+            </li>
+          </template>
+
+          <template is="dom-if" if="{{levelThreeItem}}" restamp="true">
+            <li>
+              <iron-icon icon="arrow-downward"></iron-icon><br> {{levelThreeItem.name}}
+            </li>
+          </template>
+
+          <template is="dom-if" if="{{levelFourItem}}" restamp="true">
+            <li>
+              <iron-icon icon="arrow-downward"></iron-icon><br> {{levelFourItem.name}}
+            </li>
+          </template>
+
+          <template is="dom-if" if="{{levelOneItem}}">
+            <li>
+              <iron-icon icon="arrow-downward"></iron-icon><br>
+              <button>Update Context</button>
+            </li>
+          </template>
+
+        </ul>
+
+      </div>
+
+      <div class="clear"></div>
+
+
+    </paper-dialog>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'bo-swithcontext',
+
+      properties: {
+       
+      },
+
+      ready: function(){
+        this.levelOneEnable = true;
+        this.levelTwoEnable = false;
+        this.levelThreeEnable = false;
+        this.levelFourEnable = false;
+
+        this.levelOneLoading = false;
+
+        this.itemsOne = [
+                        {id: 1112, name : "Pune"},
+                        {id: 1113, name : "Mumbai"},
+                        {id: 1114, name : "Delhi"},
+                        {id: 1115, name : "Dallas"},
+                        {id: 1116, name : "Plano"},
+                        {id: 1117, name : "Nagpur"},
+                        {id: 1131, name : "Banglore"},
+                        {id: 1211, name : "Nashik"},
+                    ];
+      },
+
+      listeners:{
+        "contextSwitchButton.tap" : "openContextMenu"
+      },
+
+      openContextMenu : function(evt){
+          console.log(evt);
+          this.$.contextSwitchDialog.positionTarget = evt.target;
+          this.$.contextSwitchDialog.open();
+      },
+
+      levelOneSelected : function(evt){
+           console.log("item selected", evt.detail);
+           
+           this._clearLevel2();
+           this._clearLevel3();
+           this._clearLevel4();
+
+           this.levelTwoEnable = true;
+
+           this.levelOneItem = evt.detail;
+
+           setTimeout(function(){
+              this.levelTwoLoading = false;
+              this.itemsTwo = this.itemsOne;
+           }.bind(this), 500);
+      },
+
+
+
+      levelTwoSelected : function(evt){
+           console.log("item selected", evt.detail);
+           this._clearLevel3();
+           this._clearLevel4();
+
+           this.levelThreeEnable = true;
+
+           this.levelTwoItem = evt.detail;
+
+            setTimeout(function(){
+              this.levelThreeLoading = false;
+              this.itemsThree = this.itemsOne;
+           }.bind(this), 500);
+      },
+
+      levelThreeSelected : function(evt){
+           console.log("item selected", evt.detail);
+           this._clearLevel4();
+           this.levelFourEnable = true;
+
+           this.levelThreeItem = evt.detail;
+
+            setTimeout(function(){
+              this.levelFourLoading = false;
+              this.itemsFour = this.itemsOne;
+           }.bind(this), 500);
+      },
+
+      levelFourSelected : function(evt){
+           console.log("item selected", evt.detail);
+
+           this.levelFourItem = evt.detail;
+      },
+
+      _clearLevel2 : function(){
+         this.levelTwoLoading = true;
+            this.levelTwoEnable = false;
+            this.levelTwoItem = null;
+      },
+      _clearLevel3 : function(){
+          this.levelThreeLoading = true;
+          this.levelThreeEnable = false;
+          this.levelThreeItem = null;
+      },
+       _clearLevel4 : function(){
+         this.levelFourLoading = true;
+         this.levelFourEnable = false;
+         this.levelFourItem = null;
+       }
+
+
+    });
+  </script>
+</dom-module>

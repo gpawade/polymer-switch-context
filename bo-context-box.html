@@ -1,0 +1,107 @@
+<link rel="import" href="/polymer/polymer.html">
+
+<dom-module id="bo-context-box">
+    <template>
+        <style>
+            :host {
+                display: block;
+                background: #2f353f;
+                padding: 0px !important;
+                margin: 5px;
+                float: left;
+            }
+            
+            ul {
+                list-style-type: none;
+                padding: 0;
+                margin: 0px;
+            }
+            
+            ul > li {
+                padding: 5px;
+                ;
+                border-bottom: 1px #0b0e14 solid;
+                color: gray;
+                font-weight: 600;
+                cursor: pointer;
+            }
+            
+            li:hover {
+                background: #2F357F;
+            }
+            
+            input[type="text"] {
+                height: 25px;
+                border: none;
+                margin: 10px;
+            }
+            
+            li.active {
+                background: #2F357F;
+            }
+        </style>
+
+        <template is="dom-if" if="{{isloading}}">
+            Loading ....
+        </template>
+
+        <template is="dom-if" if="{{!isloading}}">
+            <input type="text" value="{{searchString::input}}">
+            <ul>
+
+                <template is="dom-repeat" items="{{items}}" filter="{{computeFilter(searchString)}}">
+
+                    <li on-click="onItemSelected"> {{item.name}} ( {{item.id}})</li>
+
+                </template>
+
+            </ul>
+        </template>
+
+    </template>
+    <script>
+        (function() {
+            'use strict';
+          
+            Polymer({
+                is: 'bo-context-box',
+
+                properties:{
+                    isloading : {
+                        type:Boolean,
+                        value: true,
+                        notify : true
+                    }
+                },
+
+                ready: function(){
+                   console.log("ready");
+                },
+
+                 computeFilter: function(searchString) {
+                    if (!searchString) {
+                        return null;
+                    } else {
+                        searchString = searchString.toLowerCase();
+                        return function(item) {
+                            var name = item.name.toLowerCase();
+                            var id = item.id.toString();
+                            return (name.indexOf(searchString) != -1 ||
+                                id.indexOf(searchString) != -1);
+                        };
+                    }
+                },
+
+                onItemSelected : function(evt){
+                    console.log(evt.model.item);
+                    this.fire("selected", evt.model.item);
+                    var previousSelected = this.getElementsByClassName("active")[0];
+                    if(previousSelected)
+                      previousSelected.classList.remove("active");
+                    evt.target.classList.add("active");
+                }
+      
+            });
+        })();
+    </script>
+</dom-module>
